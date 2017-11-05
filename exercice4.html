@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="jquery-3.2.1.js"></script>
+    <title>Exercice 4</title>
+  </head>
+  <body>
+    <form>
+      <label for="lastname">Nom : </label><input type="text" name="lastname" placeholder="Nom" id="lastName"/><br/>
+      <label for="firstname">Prénom : </label><input type="text" name="firstname" placeholder="Prénom" id="firstName"/><br/>
+      <label for="birthday">Date de naissance : </label><input type="text" name="birthday" placeholder="01/01/1990" id="birthday"/><br/>
+      <label for="birthday">Lieu de naissance : </label><input type="text" name="placeBirth" placeholder="ville" id="placeBirth"/><br/>
+      <label for="placeBirth">Métier </label><input type="text" name="work" placeholder="métier" id="work"/><br/>
+      <label for="company">Société : </label><input type="text" name="company" placeholder="entreprise" id="company"/><br/>
+      <button type="button" name="button" id="submit">soumettre</button>
+      <span id="messageDescription"></span>
+    </form>
+    <script>
+      $(function(){
+        $('#submit').click(function(){
+          $('.messageAlert').empty();
+          var messageAlert='<i class=messageAlert>saisie incorrect</i>';
+          var lastName=$('#lastName').val(), firstName=$('#firstName').val(), birthday = $('#birthday').val(), placeBirth = $('#placeBirth').val(), work = $('#work').val(), company = $('#company').val(), check=0;
+          /*regexName permet d'effectuer un filtre sur les saisie lastName et firstName
+          on indique en premier que la chaine de caractère doit commencé par une chaine d'au mmoin 2 caractères compris entre a et z en excluant tout les chiffres ensuite qu'il peut y avoir un '-'
+          ensuite on indique qu'il y aura une nouvelle chaine également d'au moin 2 caractères.
+          le '|' permet de dire ou alors dans ce cas : juste une chaine d'au moins 2 caractères sans nombre
+          Le "flag" 'i' permet d'indiquer l'indiférence en majuscule et minuscule*/
+          var regexName = /(^([a-z\\D]{2,20})+-?[a-z\\D]{2,15}$)|(^([a-z\\D]{2,20})$)/i;
+          var regexTown = /(^([a-z\\D]{2,20})+-?([a-z\\D]{2,15})+-?[a-z\\D]{2,15}$)|(^([a-z\\D]{2,20})$)/i;
+          var regexSociety = /(^([a-z\d]{2,20})+(-?| ?)([a-z\d]{2,15})+(-?| ?)[a-z\d]{2,15}$)|(^([a-z\d]{2,20})$)/i;
+          var regexWork = /(^([a-z\D]{2,20})+(-?| ?)([a-z\D]{2,15})+(-?| ?)[a-z\D]{2,15}$)|(^([a-z\D]{2,20})$)/i;
+          var regexBirthday= /(^((\d){2,2})+(\/{1,1})((\d){2,2})+(\/{1,1})((\d){4,4})$)/
+          if (regexName.test(lastName) && lastName){
+            check++;
+            console.log('nom bien écris');
+          }else{
+            $('#lastName').after(messageAlert);
+            console.log('nom mal écrit');
+          }
+          if (regexName.test(firstName) && firstName){
+            check++;
+            console.log('prenom bien écris');
+          }else{
+            $('#firstName').after(messageAlert);
+            console.log('prénom mal écrit');
+          }
+          if (regexTown.test(placeBirth) && placeBirth){
+            check++;
+            console.log('ville bien écris');
+          }else{
+            $('#placeBirth').after(messageAlert);
+            console.log('ville mal écrit');
+          }
+          if (regexSociety.test(company) && company){
+            check++;
+            console.log('société bien écris');
+          }else{
+            $('#company').after(messageAlert);
+            console.log('société mal écrit');
+          }
+          if (regexWork.test(work) && work){
+            check++;
+            console.log('métier bien écris');
+          }else{
+            $('#work').after(messageAlert);
+            console.log('métier mal écrit');
+          }
+          if (regexBirthday.test(birthday) && birthday){
+            check++;
+            console.log('DDN bien écris');
+          }else{
+            $('#birthday').after(messageAlert);
+            console.log('DDN mal écrit');
+          }
+          $('.messageAlert').css('color','red');
+        });
+      });
+
+    </script>
+  </body>
+</html>
