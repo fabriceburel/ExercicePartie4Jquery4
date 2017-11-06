@@ -12,7 +12,7 @@
       <label for="lastname">Nom : </label><input type="text" name="lastname" placeholder="Nom" id="lastName"/><br/>
       <label for="firstname">Prénom : </label><input type="text" name="firstname" placeholder="Prénom" id="firstName"/><br/>
       <label for="birthday">Date de naissance : </label><input type="date" name="birthday" placeholder="01/01/1990" maxlength="10" id="birthday"/><br/>
-      <label for="birthday">Lieu de naissance : </label><input type="text" name="placeBirth" placeholder="ville" id="placeBirth"/><br/>
+      <label for="birthday">Lieu de naissance : </label><input type="date" name="placeBirth" placeholder="ville" id="placeBirth"/><br/>
       <label for="placeBirth">Métier </label><input type="text" name="work" placeholder="métier" id="work"/><br/>
       <label for="company">Société : </label><input type="text" name="company" placeholder="entreprise" id="company"/><br/>
       <button type="button" name="button" id="submit">soumettre</button>
@@ -20,17 +20,42 @@
     </form>
     <script>
       $(function(){
-        $("#birthday").datepicker();
+        var testBirthday=0;
+        $( "#birthday" ).datepicker({
+          changeMonth: true,
+          changeYear: true,
+          maxDate:"D",
+          minDate:-49000
+        });
+        $("#birthday").datepicker({
+            showOn: "button",
+            buttonImage: "images/ui-icons_444444_256x240.png",
+            buttonImageOnly: true
+        });
+        $("#birthday").datepicker( "option", "dateFormat","dd/mm/yy");
+         //cet fonction permet de rajouter un '/' lors de la saisi manuel entre le jour et le mois et entre le
         $('#birthday').keyup(function(key){
           var input=$(this).val();
           key=key.which;
           console.log(key);
+          testBirthday=0;
           if(key!=8 && (input.length==2 || input.length==5)){
            console.log('appui d une touche nombre');
            $(this).val($(this).val()+'/');
-         }else if(key!=8 && input.length==10){
-              $(this).val($(this).val());
-            }
+         }
+       });
+       $('#birthday').blur(function(){
+         var input=$(this).val();
+         if (input.length==10){
+           var tabBirthday=input.split('/');
+           console.log(tabBirthday);
+           if(isNaN(tabBirthday[0])==false && isNaN(tabBirthday[1])==false && isNaN(tabBirthday[2])==false){
+             if(parseInt(tabBirthday[0])<=31 && parseInt(tabBirthday[1])<=12 && parseInt(tabBirthday[2])>=1880 && parseInt(tabBirthday[2])<=2017){
+               console.log('condition date vérifier');
+               testBirthday=1;
+             }
+           }
+         }
         });
         $('#submit').click(function(){
           $('.messageAlert').empty();
@@ -85,12 +110,12 @@
             $('#work').after(messageAlert);
             console.log('métier mal écrit');
           }
-          if (regexBirthday.test(birthday) && birthday){
+          if (regexBirthday.test(birthday) && birthday && testBirthday==1){
             check++;
-            console.log('DDN bien écris');
+            console.log('DDN bien écris' + testBirthday);
           }else{
             $('#birthday').after(messageAlert);
-            console.log('DDN mal écrit');
+            console.log('DDN mal écrit' + testBirthday );
           }if(check==6){
             $('#messageDescription').prepend(firstName + ' ' + lastName + ',né le ' + birthday + ',à ' + placeBirth + ',actuellement ' + work + ',à ' + company);
           }
