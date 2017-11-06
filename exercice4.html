@@ -2,14 +2,16 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="jquery-ui.css">
     <script src="jquery-3.2.1.js"></script>
+    <script src="jquery-ui.min.js"></script>
     <title>Exercice 4</title>
   </head>
   <body>
     <form>
       <label for="lastname">Nom : </label><input type="text" name="lastname" placeholder="Nom" id="lastName"/><br/>
       <label for="firstname">Prénom : </label><input type="text" name="firstname" placeholder="Prénom" id="firstName"/><br/>
-      <label for="birthday">Date de naissance : </label><input type="text" name="birthday" placeholder="01/01/1990" id="birthday"/><br/>
+      <label for="birthday">Date de naissance : </label><input type="date" name="birthday" placeholder="01/01/1990" maxlength="10" id="birthday"/><br/>
       <label for="birthday">Lieu de naissance : </label><input type="text" name="placeBirth" placeholder="ville" id="placeBirth"/><br/>
       <label for="placeBirth">Métier </label><input type="text" name="work" placeholder="métier" id="work"/><br/>
       <label for="company">Société : </label><input type="text" name="company" placeholder="entreprise" id="company"/><br/>
@@ -18,8 +20,21 @@
     </form>
     <script>
       $(function(){
+        $("#birthday").datepicker();
+        $('#birthday').keyup(function(key){
+          var input=$(this).val();
+          key=key.which;
+          console.log(key);
+          if(key!=8 && (input.length==2 || input.length==5)){
+           console.log('appui d une touche nombre');
+           $(this).val($(this).val()+'/');
+         }else if(key!=8 && input.length==10){
+              $(this).val($(this).val());
+            }
+        });
         $('#submit').click(function(){
           $('.messageAlert').empty();
+          $('#messageDescription').empty();
           var messageAlert='<i class=messageAlert>saisie incorrect</i>';
           var lastName=$('#lastName').val(), firstName=$('#firstName').val(), birthday = $('#birthday').val(), placeBirth = $('#placeBirth').val(), work = $('#work').val(), company = $('#company').val(), check=0;
           /*regexName permet d'effectuer un filtre sur les saisie lastName et firstName
@@ -27,13 +42,14 @@
           ensuite on indique qu'il y aura une nouvelle chaine également d'au moin 2 caractères.
           le '|' permet de dire ou alors dans ce cas : juste une chaine d'au moins 2 caractères sans nombre
           Le "flag" 'i' permet d'indiquer l'indiférence en majuscule et minuscule*/
-          var regexName = /(^([a-z\\D]{2,20})+-?[a-z\\D]{2,15}$)|(^([a-z\\D]{2,20})$)/i;
-          var regexTown = /(^([a-z\\D]{2,20})+-?([a-z\\D]{2,15})+-?[a-z\\D]{2,15}$)|(^([a-z\\D]{2,20})$)/i;
-          var regexSociety = /(^([a-z\d]{2,20})+(-?| ?)([a-z\d]{2,15})+(-?| ?)[a-z\d]{2,15}$)|(^([a-z\d]{2,20})$)/i;
-          var regexWork = /(^([a-z\D]{2,20})+(-?| ?)([a-z\D]{2,15})+(-?| ?)[a-z\D]{2,15}$)|(^([a-z\D]{2,20})$)/i;
-          var regexBirthday= /(^((\d){2,2})+(\/{1,1})((\d){2,2})+(\/{1,1})((\d){4,4})$)/
+          var regexName = /(^([éïèôàa-z\\D]{2,20})+-?[éïèôàa-z\\D]{2,15}$)|(^([éïèôàa-z\\D]{2,20})$)/i;
+          var regexTown = /(^([éïèôàa-z\\D]{2,20})+-?([a-z\\D]{2,15})+-?[a-z\\D]{2,15}$)|(^([a-z\\D]{2,20})$)/i;
+          var regexSociety = /(^([éïèôàa-z\d]{2,20})+(-?|\s?)([éïèôàa-z\d]{2,15})+(-?|\s?)[éïèôàa-z\d]{2,15}$)|(^([éïèôàa-z\d]{2,20})$)/i;
+          var regexWork = /(^([éïèôàa-z\D]{2,20})+(-?|\s?)([éïèôàa-z\D]{2,15})+(-?|\s?)[éïèôàa-z\D]{2,15}$)|(^([éïèôàa-z\D]{2,20})$)/i;
+          var regexBirthday= /(^((\d){1,2})+(\/{1,1})((\d){2})+(\/{1,1})((\d){4})$)/
           if (regexName.test(lastName) && lastName){
             check++;
+            lastName=lastName.toUpperCase();
             console.log('nom bien écris');
           }else{
             $('#lastName').after(messageAlert);
@@ -41,6 +57,8 @@
           }
           if (regexName.test(firstName) && firstName){
             check++;
+            firstName=firstName.toLowerCase();
+            firstName[0]=firstName[0].toUpperCase();
             console.log('prenom bien écris');
           }else{
             $('#firstName').after(messageAlert);
@@ -73,6 +91,8 @@
           }else{
             $('#birthday').after(messageAlert);
             console.log('DDN mal écrit');
+          }if(check==6){
+            $('#messageDescription').prepend(firstName + ' ' + lastName + ',né le ' + birthday + ',à ' + placeBirth + ',actuellement ' + work + ',à ' + company);
           }
           $('.messageAlert').css('color','red');
         });
